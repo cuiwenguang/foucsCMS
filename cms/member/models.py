@@ -12,9 +12,10 @@ class Profile(models.Model):
     avatar = models.CharField(max_length=255) # 头像
     job = models.CharField(max_length=50, null=True, blank=True) # 工作
     mobile = models.CharField(max_length=20, null=True, blank=True) # 电话
+    mobile_code = models.CharField(max_length=100,  null=True, blank=True) # 手机编码
     integral = models.IntegerField(default=0) # 资产（积分）
     paypal = models.CharField(max_length=50) # 网银账号
-
+    language = models.CharField(max_length=20, default='en') # 语言
 
 class Favorite(models.Model):
     '''收藏'''
@@ -23,10 +24,13 @@ class Favorite(models.Model):
     article_id = models.IntegerField()
     collect_date = models.DateTimeField(default=timezone.now)
 
-
 class Subscribe(models.Model):
     '''我订阅的频道'''
     user_id = models.IntegerField(null=True, blank=True)
     user_name = models.CharField(max_length=50, null=True, blank=True)
     channel_id = models.IntegerField()
     channel_name = models.CharField(max_length=50)
+
+class Friend(models.Model):
+    user_id = models.IntegerField(null=True, blank=True)
+    follow_id = models.IntegerField(null=True, blank=True)

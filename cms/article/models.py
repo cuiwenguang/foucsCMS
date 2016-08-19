@@ -34,6 +34,7 @@ class Article(models.Model):
     page_url = models.CharField(max_length=500) # 原文链接
     update_date = models.DateTimeField(null=True, blank=True)
     language = models.CharField(max_length=20, default='en')
+    category = models.CharField(max_length=20, null=True,blank=True) # 板块分类，方便查询
 
 
 class Comment(models.Model):

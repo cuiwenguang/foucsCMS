@@ -20,6 +20,6 @@ from cms.member import views
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^oauth/', include(oauth_urls, namespace='oauth2_provider')),
-    url(r'^login/$', views.oauth_test),
+    url(r'^test/','cms.member.api.test'),
     url(r'^loginCallBack/', views.oauth_callback),
 ]

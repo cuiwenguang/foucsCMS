@@ -15,7 +15,7 @@ class Withdrawals(models.Model):
 
 class IntegralDetail(models.Model):
     '''积分明细'''
-    action = {'read': 1, 'vote': 3, 'comment': 5}
+    action = {'read': 1, 'vote': 3, 'comment': 5, 'login':5, 'register': 20}
 
     user_id = models.IntegerField(null=True, blank=True)
     user_name = models.CharField(max_length=50, null=True, blank=True)

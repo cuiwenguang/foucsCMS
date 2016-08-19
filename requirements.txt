@@ -4,5 +4,6 @@ django-tastypie
 django-oauth-toolkit
 django-cors-headers
 django-tastypie-oauth
+django-socketio
 requests
 whoosh
