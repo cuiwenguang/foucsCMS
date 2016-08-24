@@ -1,9 +1,20 @@
 # encoding:utf-8
-from django.shortcuts import HttpResponse,render
+from django.views.decorators.csrf import csrf_exempt
+from oauth2_provider.views.base import TokenView
 from requests.auth import HTTPBasicAuth
+from django.contrib.auth.models import User
+from oauth2_provider.models import AccessToken
+import json
 import requests
 
+from cms.utils.http import StatusCode, create_json_resposne
+
 def test(request):
+    '''
+
+    :param request:
+    :return:
+
     url = 'http://127.0.0.1:8000/oauth/token/'
 
     token_request_data = {
@@ -16,17 +27,55 @@ def test(request):
 
     auth_header = HTTPBasicAuth(client_id, client_secret)
     res = requests.post(url,  data=token_request_data, auth=auth_header)
-
     return HttpResponse(res.text)
-
-
-def login(request):
-    '''登录'''
+    '''
     pass
+
+class LoginView(TokenView):
+    def post(self, request, *args, **kwargs):
+        res = super(LoginView, self).post(request, *args, **kwargs)
+        oauth_data = json.loads(res.content)
+        return create_json_resposne(request, data=oauth_data)
+
+
+@csrf_exempt
+def user_info(request, token):
+    id = AccessToken.objects.get(token=token).user_id
+    user = User.objects.get(pk=id)
+    return create_json_resposne(request,data=user)
+
+@csrf_exempt
 
 def register(request):
     '''注册'''
-    pass
+    from cms.utils.validators import validate_email
+    req_data= json.loads(request.body)
+
+    if User.objects.filter(username=req_data['username']):
+        return create_json_resposne(request, status_code=StatusCode.VALIDATE_ERROR,
+                                    message='username is existed')
+
+    if req_data['password'] != req_data['confirm_pwd']:
+        return create_json_resposne(request, status_code=StatusCode.VALIDATE_ERROR,
+                                    message = 'passswords does not match')
+
+    if  not validate_email(req_data['email']) and len(req_data['email']):
+        return create_json_resposne(request, status_code=StatusCode.VALIDATE_ERROR,
+                                    message = 'Email format error')
+
+    user = User.objects.create_superuser(req_data['username'],
+                                         req_data['email'],
+                                         req_data['password'])
+    user.is_superuser=False
+    user.is_active = req_data["is_temp"]
+    user.save()
+
+    res_data = {
+        'id': user.id
+    }
+    return create_json_resposne(request, data=res_data)
+
+
 
 def update_Info(request):
     '''修改个人信息'''

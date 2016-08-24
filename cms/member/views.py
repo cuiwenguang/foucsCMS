@@ -15,5 +15,7 @@ def oauth_test(request):
 
 
 def oauth_callback(request):
+    request.method
     return HttpResponse('Hello')
+
 
